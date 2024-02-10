@@ -9,7 +9,7 @@ export type TReduceMapper<T extends TDataModel> = {
 }
 
 export type THooks<T extends TDataModel> = {
-    [key in keyof T]?: (data: Omit<T, key>) => void
+    [key in keyof T]?: (data: T) => void
 }
 
 export type TDistributer<T extends TDataModel> = Record<string, (data: T) => unknown>

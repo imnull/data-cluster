@@ -1,4 +1,4 @@
-import { DataCluster, DataDistributer } from "./src"
+const { DataCluster } = require("./dist")
 
 const cluster = new DataCluster({
     a: 0,
@@ -23,13 +23,11 @@ cluster.subscribe({
     }
 }).exec().then(raw => {
     console.log('------>', raw)
-    distributer.exec(raw).then(data => {
-        console.log('=======>', data)
-    })
-
+    const data = distributer.exec(raw)
+    console.log('=======>', data)
 })
 
-const distributer = new DataDistributer<ReturnType<typeof cluster.getData>>({
+const distributer = cluster.createDistributer({
     'a + b': async data => data.a + data.b,
     'a + c': async data => data.a + data.c,
     'b + c': async data => data.b + data.c,

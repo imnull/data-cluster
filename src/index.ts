@@ -96,22 +96,27 @@ export class DataCluster<T extends TDataModel>{
     getData() {
         return { ...this.data } as T
     }
+
+    createDistributer(distributer: TDistributer<T>) {
+        const dis = new DataDistributer<T>(distributer)
+        return dis
+    }
 }
 
 
-export class DataDistributer<T extends TDataModel> {
+class DataDistributer<T extends TDataModel> {
     private readonly distributer: TDistributer<T>
     constructor(distributer: TDistributer<T>) {
         this.distributer = distributer
     }
 
-    async exec(data: T) {
-        const keys = Object.keys(this.distributer) as (keyof typeof this.distributer)[]
-        const res: { [key in keyof typeof this.distributer]?: ReturnType<(typeof this.distributer)[key]> } = {}
-        await Promise.all(keys.map(async key => {
-            const r = await this.distributer[key](data)
+    exec(data: T) {
+        const keys = Object.keys(this.distributer) as (keyof TDistributer<T>)[]
+        const res: { [key in keyof TDistributer<T>]?: ReturnType<(TDistributer<T>)[key]> } = {}
+        keys.map(key => {
+            const r = this.distributer[key](data)
             res[key] = r
-        }))
+        })
         return res
     }
 }
